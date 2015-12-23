@@ -21,10 +21,10 @@ consumerA.replyTransform.append(data => data['result'] === 'success' ? true : fa
 
 let consumerB = new hdtp.Consumer.Configure(
 	data => { ... },
-	[data => {
+	[data => ({
 		foo : data.bar,
 		bar : data.baz
-	}],
+	})],
 	[
 		data => typeof data === 'string' ? data : null,
 		data => data.charAt(0)
