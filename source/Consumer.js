@@ -20,6 +20,11 @@ export default class Consumer {
 	 * @constructor
 	 */
 	static Configure(fn, request = [], reply = []) {
+		if (
+			!Array.isArray(request) ||
+			!Array.isArray(reply)
+		) throw new TypeError();
+
 		const res = new Consumer(fn);
 
 		res.requestTransform.append(...request);
