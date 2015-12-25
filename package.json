@@ -4,6 +4,13 @@
 	"version": "0.1.0",
 	"license" : "MIT",
 
+	"keywords" : [
+		"distributor",
+		"consumer",
+		"transform",
+		"tree"
+	],
+
 	"author" : {
 		"name" : "Christoph Kettelhoit",
 		"email" : "ck@christoph-kettelhoit.de",
@@ -19,6 +26,8 @@
 		"gulp" : "gulp",
 		"test" : "gulp test"
 	},
+
+	"main" : "es5/index.js",
 
 	"files" : [
 		"source/index.js",
