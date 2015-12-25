@@ -39,6 +39,8 @@ var Consumer = (function () {
 			var request = arguments.length <= 1 || arguments[1] === undefined ? [] : arguments[1];
 			var reply = arguments.length <= 2 || arguments[2] === undefined ? [] : arguments[2];
 
+			if (!Array.isArray(request) || !Array.isArray(reply)) throw new TypeError();
+
 			var res = new Consumer(fn);
 
 			(_res$requestTransform = res.requestTransform).append.apply(_res$requestTransform, _toConsumableArray(request));
@@ -59,6 +61,8 @@ var Consumer = (function () {
 		_classCallCheck(this, Consumer);
 
 		if (typeof fn !== 'function') throw new TypeError();
+
+		_target.set(this, fn);
 
 		_requestTransform.set(this, new _FilterTransform2.default());
 		_replyTransform.set(this, new _FilterTransform2.default());
