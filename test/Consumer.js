@@ -144,9 +144,67 @@ describe('Consumer', () => {
 
 
 	describe('.Configure', () => {
-		it("should accept a function as first argument");
-		it("should optionally accept an array of functions as second argument");
-		it("should optionally accept an array of function as tertiary argument");
-		it("should return a configured instance");
+		it("should accept a function as first argument", () => {
+			assert.throws(() => Consumer.Configure(), TypeError);
+			assert.throws(() => Consumer.Configure(true), TypeError);
+			assert.throws(() => Consumer.Configure(1), TypeError);
+			assert.throws(() => Consumer.Configure("1"), TypeError);
+			assert.throws(() => Consumer.Configure(Symbol()), TypeError);
+			assert.throws(() => Consumer.Configure({}), TypeError);
+			assert.throws(() => Consumer.Configure([]), TypeError);
+			assert.doesNotThrow(() => Consumer.Configure(data => 1));
+		});
+
+		it("should optionally accept an array of functions as second argument", () => {
+			const fn = data => Promise.resolve(data);
+
+			assert.throws(() => Consumer.Configure(fn, true), TypeError);
+			assert.throws(() => Consumer.Configure(fn, 1), TypeError);
+			assert.throws(() => Consumer.Configure(fn, "1"), TypeError);
+			assert.throws(() => Consumer.Configure(fn, Symbol()), TypeError);
+			assert.throws(() => Consumer.Configure(fn, {}), TypeError);
+			assert.throws(() => Consumer.Configure(fn, fn), TypeError);
+
+			assert.doesNotThrow(() => Consumer.Configure(fn, []));
+			assert.throws(() => Consumer.Configure(fn, [ true ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [ 1 ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [ "1" ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [ Symbol() ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [ {} ]), TypeError);
+			assert.doesNotThrow(() => Consumer.Configure(fn, [ fn ]));
+		});
+
+		it("should optionally accept an array of functions as tertiary argument", () => {
+			const fn = data => Promise.resolve(data);
+
+			assert.throws(() => Consumer.Configure(fn, [], true), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], 1), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], "1"), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], Symbol()), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], {}), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], fn), TypeError);
+
+			assert.doesNotThrow(() => Consumer.Configure(fn, [], []));
+			assert.throws(() => Consumer.Configure(fn, [], [ true ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], [ 1 ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], [ "1" ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], [ Symbol() ]), TypeError);
+			assert.throws(() => Consumer.Configure(fn, [], [ {} ]), TypeError);
+			assert.doesNotThrow(() => Consumer.Configure(fn, [], [ fn ]));
+		});
+
+		it("should return a configured instance", () => {
+			const fnA = data => data;
+			const fnB = data => data;
+			const fnC = data => Promise.resolve(data);
+
+			const consumer = Consumer.Configure(fnC, [ fnA ], [ fnB ]);
+
+			assert.strictEqual(fnC, consumer.target);
+			assert.strictEqual(consumer.requestTransform.items.length, 1);
+			assert.strictEqual(consumer.requestTransform.items[0], fnA);
+			assert.strictEqual(consumer.replyTransform.items.length, 1);
+			assert.strictEqual(consumer.replyTransform.items[0], fnB);
+		});
 	});
 });
