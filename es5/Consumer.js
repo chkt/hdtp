@@ -6,23 +6,46 @@ Object.defineProperty(exports, "__esModule", {
 	value: true
 });
 
-var _FilterTransform = require('./FilterTransform');
-
-var _FilterTransform2 = _interopRequireDefault(_FilterTransform);
-
-function _interopRequireDefault(obj) { return obj && obj.__esModule ? obj : { default: obj }; }
+var _Node2 = require('./Node');
 
 function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } else { return Array.from(arr); } }
 
 function _classCallCheck(instance, Constructor) { if (!(instance instanceof Constructor)) { throw new TypeError("Cannot call a class as a function"); } }
 
-var _target = new WeakMap();
+function _possibleConstructorReturn(self, call) { if (!self) { throw new ReferenceError("this hasn't been initialised - super() hasn't been called"); } return call && (typeof call === "object" || typeof call === "function") ? call : self; }
 
-var _requestTransform = new WeakMap();
-var _replyTransform = new WeakMap();
+function _inherits(subClass, superClass) { if (typeof superClass !== "function" && superClass !== null) { throw new TypeError("Super expression must either be null or a function, not " + typeof superClass); } subClass.prototype = Object.create(superClass && superClass.prototype, { constructor: { value: subClass, enumerable: false, writable: true, configurable: true } }); if (superClass) Object.setPrototypeOf ? Object.setPrototypeOf(subClass, superClass) : subClass.__proto__ = superClass; }
 
-var Consumer = (function () {
-	_createClass(Consumer, null, [{
+var Consumer = (function (_Node) {
+	_inherits(Consumer, _Node);
+
+	function Consumer() {
+		_classCallCheck(this, Consumer);
+
+		return _possibleConstructorReturn(this, Object.getPrototypeOf(Consumer).apply(this, arguments));
+	}
+
+	_createClass(Consumer, [{
+		key: 'target',
+
+		/**
+   * Gets the target callback
+   * @returns {Function}
+   */
+		get: function get() {
+			return _Node2.getTarget.call(this);
+		}
+
+		/**
+   * Sets the target callback
+   * @param {Function} fn
+   * @throws {TypeError} if fn is not a Function
+   */
+		,
+		set: function set(fn) {
+			_Node2.setTarget.call(this, fn);
+		}
+	}], [{
 		key: 'Configure',
 
 		/**
@@ -48,100 +71,9 @@ var Consumer = (function () {
 
 			return res;
 		}
-
-		/**
-   * Creates a new instance
-   * @param {Function} fn - The callback
-   * @throws {TypeError} if fn is not a Function
-   */
-
-	}]);
-
-	function Consumer(fn) {
-		_classCallCheck(this, Consumer);
-
-		if (typeof fn !== 'function') throw new TypeError();
-
-		_target.set(this, fn);
-
-		_requestTransform.set(this, new _FilterTransform2.default());
-		_replyTransform.set(this, new _FilterTransform2.default());
-	}
-
-	/**
-  * Gets the request filter
-  * @returns {Filter}
-  */
-
-	_createClass(Consumer, [{
-		key: 'consume',
-
-		/**
-   * Returns a promise representing the transformed result
-   * @param {Object} data - The request data
-   * @returns {Promise}
-   * @throws {TypeError} if data is not an Object
-   * @throws {ReferenceError} if the callback return value is not a Promise
-   */
-		value: function consume(data) {
-			var _this = this;
-
-			if (!(data instanceof Object)) throw new TypeError();
-
-			data = _requestTransform.get(this).process(data);
-
-			if (data === null) return Promise.resolve(null);
-
-			var p = _target.get(this)(data);
-
-			if (!(p instanceof Promise)) throw new ReferenceError();
-
-			return p.then(function (data) {
-				return _replyTransform.get(_this).process(data);
-			});
-		}
-	}, {
-		key: 'requestTransform',
-		get: function get() {
-			return _requestTransform.get(this);
-		}
-
-		/**
-   * Gets the reply filter
-   * @returns {Filter}
-   */
-
-	}, {
-		key: 'replyTransform',
-		get: function get() {
-			return _replyTransform.get(this);
-		}
-
-		/**
-   * Gets the target callback
-   * @returns {Function}
-   */
-
-	}, {
-		key: 'target',
-		get: function get() {
-			return _target.get(this);
-		}
-
-		/**
-   * Sets the target callback
-   * @param {Function} fn
-   * @throws {TypeError} if fn is not a Function
-   */
-		,
-		set: function set(fn) {
-			if (typeof fn !== 'function') throw new TypeError();
-
-			_target.set(this, fn);
-		}
 	}]);
 
 	return Consumer;
-})();
+})(_Node2.Node);
 
 exports.default = Consumer;
