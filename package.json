@@ -1,7 +1,7 @@
 {
 	"name": "hdtp",
 	"description" : "Heterogeneous Data Transform and Propagation",
-	"version": "0.1.1",
+	"version": "0.1.2",
 	"license" : "MIT",
 
 	"keywords" : [
