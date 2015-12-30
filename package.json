@@ -1,7 +1,7 @@
 {
 	"name": "hdtp",
 	"description" : "Heterogeneous Data Transform and Propagation",
-	"version": "0.1.2",
+	"version": "0.1.3",
 	"license" : "MIT",
 
 	"keywords" : [
@@ -33,11 +33,13 @@
 		"source/index.js",
 		"source/FilterException.js",
 		"source/FilterTransform.js",
+		"source/Node.js",
 		"source/Consumer.js",
 		"source/Distributor.js",
 		"es5/index.js",
 		"es5/FilterException.js",
 		"es5/FilterTransform.js",
+		"es5/Node.js",
 		"es5/Consumer.js",
 		"es5/Distributor.js"
 	],
