@@ -1,4 +1,8 @@
-import Consumer from './Consumer';
+import {
+	Node,
+	getTarget,
+	setTarget
+} from './Node';
 
 
 
@@ -6,7 +10,7 @@ const _consumers = new WeakMap();
 
 
 
-export default class Distributor {
+export default class Distributor extends Node {
 	/**
 	 * Creates a new instance
 	 * @param {Array} consumers
@@ -14,11 +18,18 @@ export default class Distributor {
 	constructor(consumers = []) {
 		if (!Array.isArray(consumers)) throw new TypeError();
 
-		_consumers.set(this, consumers.map((item) => {
-			if (!(item instanceof Consumer)) throw new TypeError();
+		super(data => {
+			const consumers = _consumers.get(this);
+			const all = [];
 
-			return item;
-		}));
+			for (let consumer of consumers) all.push(consumer.consume(data));
+
+			return Promise.all(all);
+		});
+
+		_consumers.set(this, []);
+
+		this.addConsumer(...consumers);
 	}
 
 
@@ -38,7 +49,7 @@ export default class Distributor {
 	 * @throws {TypeError} if consumer is not a Consumer
 	 */
 	hasConsumer(consumer) {
-		if (!(consumer instanceof Consumer)) throw new TypeError();
+		if (!(consumer instanceof Node)) throw new TypeError();
 
 		return _consumers.get(this).indexOf(consumer) !== -1;
 	}
@@ -53,7 +64,7 @@ export default class Distributor {
 		const consumers = _consumers.get(this).slice(0);
 
 		for (let item of consumer) {
-			if (!(item instanceof Consumer)) throw new TypeError();
+			if (!(item instanceof Node)) throw new TypeError();
 
 			if (consumers.indexOf(item) === -1) consumers.push(item);
 		}
@@ -73,7 +84,7 @@ export default class Distributor {
 		const consumers = _consumers.get(this).slice(0);
 
 		for (let item of consumer) {
-			if (!(item instanceof Consumer)) throw new TypeError();
+			if (!(item instanceof Node)) throw new TypeError();
 
 			const index = consumers.indexOf(item);
 
