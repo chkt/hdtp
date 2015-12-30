@@ -10,15 +10,61 @@ import {
 
 
 describe('getTarget', () => {
-	it("should get the callback target of a defined Node instance");
-	it("should throw a TypeError if not called on a Node instance");
+	it("should get the callback target of a defined Node instance", () => {
+		const fn = data => Promise.resolve(data);
+		const node = new Node(fn);
+
+		assert.strictEqual(fn, getTarget.call(node));
+	});
+
+	it("should throw a TypeError if not called on a Node instance", () => {
+		assert.throws(() => getTarget(), TypeError);
+		assert.throws(() => getTarget.call(true), TypeError);
+		assert.throws(() => getTarget.call(1), TypeError);
+		assert.throws(() => getTarget.call("1"), TypeError);
+		assert.throws(() => getTarget.call({}), TypeError);
+	});
 });
 
 
-describe('setTarget', () => {
-	it("should set the callback target of a defined Node instance");
-	it("should require its first argument to be a function");
-	it("should throw a TypeError if not called on a Node instance");
+describe('setTarget', done => {
+	it("should set the callback target of a defined Node instance", () => {
+		const fn = data => Promise.resolve("1");
+		const node = new Node(data => Promise.resolve(data));
+
+		setTarget.call(node, fn);
+
+		node
+			.consume({})
+			.then((data) => {
+				if (data === "1") done();
+				else done(new Error(data));
+			}, why => {
+				done(new Error(why));
+			});
+	});
+
+	it("should require its first argument to be a function", () => {
+		const node = new Node(data => Promise.resolve(data));
+
+		assert.throws(() => setTarget.call(node, true), TypeError);
+		assert.throws(() => setTarget.call(node, 1), TypeError);
+		assert.throws(() => setTarget.call(node, "1"), TypeError);
+		assert.throws(() => setTarget.call(node, Symbol()), TypeError);
+		assert.doesNotThrow(() => setTarget.call(node, data => new Promise(data)));
+		assert.throws(() => setTarget.call(node, {}), TypeError);
+		assert.throws(() => setTarget.call(node, []), TypeError);
+	});
+
+	it("should throw a TypeError if not called on a Node instance", () => {
+		const fn = data => new Promise(data);
+
+		assert.throws(() => setTarget(fn), TypeError);
+		assert.throws(() => setTarget.call(true, fn), TypeError);
+		assert.throws(() => setTarget.call(1, fn), TypeError);
+		assert.throws(() => setTarget.call("1", fn), TypeError);
+		assert.throws(() => setTarget.call({}, fn), TypeError);
+	});
 });
 
 
